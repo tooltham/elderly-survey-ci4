@@ -9,15 +9,26 @@ use App\Models\RespondentPrepModel;
 
 class Respondent extends BaseController
 {
+    protected $rules = [
+        'paper_id'        => 'required|alpha_numeric_space|max_length[50]',
+        'prefix'          => 'required',
+        'first_name'      => 'required|min_length[2]|max_length[100]',
+        'last_name'       => 'required|min_length[2]|max_length[100]',
+        'house_no'        => 'required',
+        'village_no'      => 'required|numeric',
+        'age_year'        => 'required|numeric|greater_than[0]',
+        'gender'          => 'required|in_list[male,female]',
+        'marital_status'  => 'required',
+        'education_level' => 'required',
+        'occupation'      => 'required',
+    ];
+
     // 1. แสดงรายการข้อมูลทั้งหมด (ตาราง)
     public function index()
     {
         $model = new RespondentModel();
 
         $data = [
-            // ดึงข้อมูลทีละ 15 แถว (เรียงจากใหม่สุดไปเก่าสุด)
-            //'respondents' => $model->orderBy('id', 'DESC')->paginate(15),
-            // เปลี่ยนจาก 'id' เป็น 'paper_id' และเปลี่ยน 'DESC' เป็น 'ASC'
             'respondents' => $model->orderBy('paper_id', 'ASC')->paginate(15),
             'pager' => $model->pager
         ];
@@ -31,52 +42,55 @@ class Respondent extends BaseController
         return view('respondents/create');
     }
 
+    // Helper: แมปข้อมูลจาก request
+    private function mapData()
+    {
+        $income = $this->request->getVar('income');
+        if ($income == "" || $income === null) $income = 0;
+
+        $age_month = $this->request->getVar('age_month');
+        if ($age_month == "" || $age_month === null) $age_month = 0;
+
+        return [
+            'paper_id'        => $this->request->getVar('paper_id'),
+            'prefix'          => $this->request->getVar('prefix'),
+            'first_name'      => $this->request->getVar('first_name'),
+            'last_name'       => $this->request->getVar('last_name'),
+            'house_no'        => $this->request->getVar('house_no'),
+            'village_no'      => $this->request->getVar('village_no'),
+            'gender'          => $this->request->getVar('gender'),
+            'age_year'        => $this->request->getVar('age_year'),
+            'age_month'       => $age_month,
+            'marital_status'  => $this->request->getVar('marital_status'),
+            'education_level' => $this->request->getVar('education_level'),
+            'occupation'      => $this->request->getVar('occupation'),
+            'income'          => $income,
+            'exercise_freq'   => $this->request->getVar('exercise_freq'),
+            'smoking_status'  => $this->request->getVar('smoking_status'),
+            'alcohol_status'  => $this->request->getVar('alcohol_status'),
+            'residence_type'  => $this->request->getVar('residence_type'),
+            'household_type'  => $this->request->getVar('household_type'),
+            'is_prepared'     => $this->request->getVar('is_prepared') ? 1 : 0,
+        ];
+    }
+
     // 3. บันทึกข้อมูลลงฐานข้อมูล
     public function store()
     {
+        if (!$this->validate($this->rules)) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $db = \Config\Database::connect();
         $respondentModel = new RespondentModel();
         $diseaseModel = new RespondentDiseaseModel();
         $prepModel = new RespondentPrepModel();
 
-        // รับค่ารายได้ (ถ้าไม่กรอก ให้เป็น 0)
-        $income = $this->request->getVar('income');
-        if ($income == "") $income = 0;
+        $db->transStart();
 
-        // รับค่าเดือน (ถ้าไม่กรอก ให้เป็น 0)
-        $age_month = $this->request->getVar('age_month');
-        if ($age_month == "") $age_month = 0;
+        $data = $this->mapData();
+        $data['created_by'] = session()->get('id');
 
-        // รับค่าข้อมูลส่วนตัว
-        $data = [
-            'paper_id' => $this->request->getVar('paper_id'),
-            'prefix' => $this->request->getVar('prefix'),
-            'first_name' => $this->request->getVar('first_name'),
-            'last_name' => $this->request->getVar('last_name'),
-            'house_no' => $this->request->getVar('house_no'),
-            'village_no' => $this->request->getVar('village_no'),
-            'gender' => $this->request->getVar('gender'),
-            'age_year' => $this->request->getVar('age_year'),
-            'age_month' => $age_month,
-            'marital_status' => $this->request->getVar('marital_status'),
-            'education_level' => $this->request->getVar('education_level'),
-            'occupation' => $this->request->getVar('occupation'),
-            'income' => $income, // ใช้ตัวแปรที่เช็คค่าว่างแล้ว
-
-            // ข้อมูลสุขภาพ
-            'exercise_freq' => $this->request->getVar('exercise_freq'),
-            'smoking_status' => $this->request->getVar('smoking_status'),
-            'alcohol_status' => $this->request->getVar('alcohol_status'),
-
-            // ข้อมูลที่อยู่
-            'residence_type' => $this->request->getVar('residence_type'),
-            'household_type' => $this->request->getVar('household_type'),
-
-            // การเตรียมตัว
-            'is_prepared' => $this->request->getVar('is_prepared') ? 1 : 0,
-            'created_by' => session()->get('id')
-        ];
-
-        // Save ลงตารางหลัก
         $respondentModel->save($data);
         $respondent_id = $respondentModel->getInsertID();
 
@@ -84,22 +98,24 @@ class Respondent extends BaseController
         $diseases = $this->request->getVar('diseases');
         if ($diseases) {
             foreach ($diseases as $disease) {
-                $diseaseModel->save([
-                    'respondent_id' => $respondent_id,
-                    'disease_name' => $disease
-                ]);
+                $diseaseModel->save(['respondent_id' => $respondent_id, 'disease_name' => $disease]);
             }
         }
 
         // จัดการด้านที่เตรียมความพร้อม
-        $preps = $this->request->getVar('preps');
-        if ($preps) {
-            foreach ($preps as $prep) {
-                $prepModel->save([
-                    'respondent_id' => $respondent_id,
-                    'prep_aspect' => $prep
-                ]);
+        if ($data['is_prepared']) {
+            $preps = $this->request->getVar('preps');
+            if ($preps) {
+                foreach ($preps as $prep) {
+                    $prepModel->save(['respondent_id' => $respondent_id, 'prep_aspect' => $prep]);
+                }
             }
+        }
+
+        $db->transComplete();
+
+        if ($db->transStatus() === FALSE) {
+            return redirect()->back()->withInput()->with('error', 'ไม่สามารถบันทึกข้อมูลได้ กรุณาลองใหม่อีกครั้ง');
         }
 
         return redirect()->to('/dashboard')->with('msg', 'บันทึกข้อมูลสำเร็จ!');
@@ -109,17 +125,18 @@ class Respondent extends BaseController
     public function edit($id = null)
     {
         $respondentModel = new RespondentModel();
+        $data['respondent'] = $respondentModel->find($id);
+
+        if (!$data['respondent']) {
+            return redirect()->to('/respondents')->with('error', 'ไม่พบข้อมูลผู้ตอบแบบสอบถาม');
+        }
+
         $diseaseModel = new RespondentDiseaseModel();
         $prepModel = new RespondentPrepModel();
 
-        // ดึงข้อมูลคนนั้นๆ
-        $data['respondent'] = $respondentModel->find($id);
-
-        // ดึงโรคที่เคยติ๊กไว้ (ส่งไปเป็น Array เพื่อเช็ค Checkbox)
         $diseases = $diseaseModel->where('respondent_id', $id)->findAll();
         $data['my_diseases'] = array_column($diseases, 'disease_name');
 
-        // ดึงการเตรียมตัวที่เคยติ๊กไว้
         $preps = $prepModel->where('respondent_id', $id)->findAll();
         $data['my_preps'] = array_column($preps, 'prep_aspect');
 
@@ -129,40 +146,18 @@ class Respondent extends BaseController
     // 5. อัปเดตข้อมูล (Update)
     public function update($id = null)
     {
+        if (!$this->validate($this->rules)) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $db = \Config\Database::connect();
         $respondentModel = new RespondentModel();
         $diseaseModel = new RespondentDiseaseModel();
         $prepModel = new RespondentPrepModel();
 
-        // รับค่าและจัดการค่าว่าง (Logic เดียวกับ Store)
-        $income = $this->request->getVar('income');
-        if ($income == "") $income = 0;
+        $db->transStart();
 
-        $age_month = $this->request->getVar('age_month');
-        if ($age_month == "") $age_month = 0;
-
-        $data = [
-            'paper_id' => $this->request->getVar('paper_id'),
-            'prefix' => $this->request->getVar('prefix'),
-            'first_name' => $this->request->getVar('first_name'),
-            'last_name' => $this->request->getVar('last_name'),
-            'house_no' => $this->request->getVar('house_no'),
-            'village_no' => $this->request->getVar('village_no'),
-            'gender' => $this->request->getVar('gender'),
-            'age_year' => $this->request->getVar('age_year'),
-            'age_month' => $age_month,
-            'marital_status' => $this->request->getVar('marital_status'),
-            'education_level' => $this->request->getVar('education_level'),
-            'occupation' => $this->request->getVar('occupation'),
-            'income' => $income,
-            'exercise_freq' => $this->request->getVar('exercise_freq'),
-            'smoking_status' => $this->request->getVar('smoking_status'),
-            'alcohol_status' => $this->request->getVar('alcohol_status'),
-            'residence_type' => $this->request->getVar('residence_type'),
-            'household_type' => $this->request->getVar('household_type'),
-            'is_prepared' => $this->request->getVar('is_prepared') ? 1 : 0,
-        ];
-
-        // สั่ง Update ตารางหลัก
+        $data = $this->mapData();
         $respondentModel->update($id, $data);
 
         // Update ตารางลูก (ลบของเก่าทิ้งให้หมด แล้วเพิ่มใหม่)
@@ -175,11 +170,19 @@ class Respondent extends BaseController
         }
 
         $prepModel->where('respondent_id', $id)->delete();
-        $preps = $this->request->getVar('preps');
-        if ($preps) {
-            foreach ($preps as $prep) {
-                $prepModel->save(['respondent_id' => $id, 'prep_aspect' => $prep]);
+        if ($data['is_prepared']) {
+            $preps = $this->request->getVar('preps');
+            if ($preps) {
+                foreach ($preps as $prep) {
+                    $prepModel->save(['respondent_id' => $id, 'prep_aspect' => $prep]);
+                }
             }
+        }
+
+        $db->transComplete();
+
+        if ($db->transStatus() === FALSE) {
+            return redirect()->back()->withInput()->with('error', 'ไม่สามารถแก้ไขข้อมูลได้ กรุณาลองใหม่อีกครั้ง');
         }
 
         return redirect()->to('/respondents')->with('msg', 'แก้ไขข้อมูลเรียบร้อยแล้ว');
@@ -188,8 +191,22 @@ class Respondent extends BaseController
     // 6. ลบข้อมูล (Delete)
     public function delete($id = null)
     {
+        $db = \Config\Database::connect();
         $respondentModel = new RespondentModel();
+        $diseaseModel = new RespondentDiseaseModel();
+        $prepModel = new RespondentPrepModel();
+
+        $db->transStart();
+
+        // ลบข้อมูลที่เกี่ยวข้องก่อน (Cascade Delete manual)
+        $diseaseModel->where('respondent_id', $id)->delete();
+        $prepModel->where('respondent_id', $id)->delete();
+
+        // ลบข้อมูลหลัก
         $respondentModel->delete($id);
+
+        $db->transComplete();
+
         return redirect()->to('/respondents')->with('msg', 'ลบข้อมูลเรียบร้อยแล้ว');
     }
 }

@@ -11,6 +11,7 @@
         <?php endif; ?>
 
         <form action="<?= base_url('/users/update/' . $user['id']) ?>" method="post">
+            <?= csrf_field() ?>
             <div class="mb-3">
                 <label class="form-label">ชื่อ-นามสกุล</label>
                 <input type="text" name="name" class="form-control" value="<?= $user['name'] ?>" required>

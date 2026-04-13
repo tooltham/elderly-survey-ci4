@@ -97,6 +97,7 @@
             <?php endif; ?>
 
             <form action="<?= base_url('/loginAuth') ?>" method="post">
+                <?= csrf_field() ?>
                 <div class="form-floating mb-3">
                     <input type="text" name="username" class="form-control" id="username" placeholder="Username" required>
                     <label for="username"><i class="fa-solid fa-user me-2"></i>ชื่อผู้ใช้งาน</label>

@@ -10,6 +10,7 @@
         </div>
 
         <form action="<?= base_url('/respondents/update/' . $respondent['id']) ?>" method="post">
+            <?= csrf_field() ?>
 
             <h5 class="text-muted border-bottom pb-2 mb-3">1. ข้อมูลทั่วไป</h5>
             <div class="row g-3 mb-3">

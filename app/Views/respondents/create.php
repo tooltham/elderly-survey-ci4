@@ -8,6 +8,7 @@
         <h4 class="mb-4 text-primary"><i class="fa-solid fa-user-plus me-2"></i>บันทึกแบบสำรวจผู้สูงอายุ</h4>
 
         <form action="<?= base_url('/respondents/store') ?>" method="post">
+            <?= csrf_field() ?>
 
             <h5 class="text-muted border-bottom pb-2 mb-3">1. ข้อมูลทั่วไป</h5>
 

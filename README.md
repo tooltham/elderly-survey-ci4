@@ -64,4 +64,3 @@ docker exec -i elderly-survey-db-prod sh -c 'mariadb -u root -p"$MYSQL_ROOT_PASS
 
 ---
 Copyright &copy; 2025-2026 BCNNP, Nakhon Phanom University. All rights reserved.
-Developed by **Mina (Gemini CLI Orchestrator)**

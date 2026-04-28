@@ -7,9 +7,10 @@ services:
       target: runtime # ใช้ stage runtime จาก Dockerfile
     container_name: elderly-survey-app-prod
     restart: always
+    ports:
+      - "3001:80"
     environment:
-      - CI_ENVIRONMENT=production
-    networks:
+      - CI_ENVIRONMENT=production    networks:
       - production-network
     depends_on:
       db:

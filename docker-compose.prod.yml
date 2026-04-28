@@ -10,7 +10,7 @@ services:
     ports:
       - "80:80"
     environment:
-      - CI_ENVIRONMENT=production
+      - CI_ENVIRONMENT=development
       - app.baseURL=http://34.15.158.206/
     networks:
       - production-network

@@ -9,6 +9,9 @@ class Auth extends BaseController
 {
     public function index()
     {
+        if (session()->get('isLoggedIn')) {
+            return redirect()->to('/dashboard');
+        }
         helper(['form']);
         return view('auth/login');
     }

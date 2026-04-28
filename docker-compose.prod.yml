@@ -11,6 +11,7 @@ services:
       - "80:80"
     environment:
       - CI_ENVIRONMENT=production
+      - app.baseURL=http://34.15.158.206/
     networks:
       - production-network
     depends_on:

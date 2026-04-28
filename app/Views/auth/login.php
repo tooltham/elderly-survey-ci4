@@ -78,10 +78,10 @@
         <div class="login-card">
 
             <div class="d-flex justify-content-center align-items-center mb-4 flex-wrap logo-row gap-2">
-                <img src="/images/mhesi.png" alt="อว." title="กระทรวง อว.">
-                <img src="/images/tsri.png" alt="สกสว." title="สกสว.">
-                <div style="border-left: 1px solid #ccc; height: 40px; margin: 0 10px;"></div> <img src="/images/bcnnp.png" alt="วิทยาลัยพยาบาล" title="วิทยาลัยพยาบาลบรมราชชนนีนครพนม">
-                <img src="/images/npu.png" alt="ม.นครพนม" title="มหาวิทยาลัยนครพนม">
+                <img src="<?= base_url('images/mhesi.png') ?>" alt="อว." title="กระทรวง อว.">
+                <img src="<?= base_url('images/tsri.png') ?>" alt="สกสว." title="สกสว.">
+                <div style="border-left: 1px solid #ccc; height: 40px; margin: 0 10px;"></div> <img src="<?= base_url('images/bcnnp.png') ?>" alt="วิทยาลัยพยาบาล" title="วิทยาลัยพยาบาลบรมราชชนนีนครพนม">
+                <img src="<?= base_url('images/npu.png') ?>" alt="ม.นครพนม" title="มหาวิทยาลัยนครพนม">
             </div>
 
             <div class="text-center mb-4">

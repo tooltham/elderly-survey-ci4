@@ -4,7 +4,7 @@
 [![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)](https://www.docker.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-ระบบฐานข้อมูลเพื่อการพัฒนารูปแบบการเตรียมความพร้อมเข้าสู่สังคมสูงวัยโดยชุมชน พัฒนาโดยหน่วยวิจัย **IoTES Research Unit** วิทยาลัยพยาบาลบรมราชชนนีนครพนม มหาวิทยาลัยนครพนม
+ระบบฐานข้อมูลเพื่อการพัฒนารูปแบบการเตรียมความพร้อมเข้าสู่สังคมสูงวัยโดยชุมชน พัฒนาโดยหน่วยวิจัย **IoTES Research Unit** ภายใต้การกำกับของวิทยาลัยพยาบาลบรมราชชนนีนครพนม มหาวิทยาลัยนครพนม
 
 ## 🚀 คุณสมบัติเด่น (Features)
 - **Respondent Management:** จัดการข้อมูลผู้สูงอายุ ข้อมูลพื้นฐาน การศึกษา และอาชีพ

@@ -10,6 +10,15 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install intl mysqli pdo_mysql zip \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+WORKDIR /var/www/html
+COPY . .
+
+# Install dependencies
+RUN composer install --no-dev --optimize-autoloader
+
 # STAGE 2: RUNTIME (Production Ready)
 FROM php:8.3-apache AS runtime
 
@@ -33,8 +42,8 @@ RUN echo "memory_limit = 256M" > /usr/local/etc/php/conf.d/pulsar-limits.ini \
 
 WORKDIR /var/www/html
 
-# Copy application files
-COPY . .
+# Copy application files and vendor from builder
+COPY --from=builder /var/www/html /var/www/html
 
 # Set permissions for CI4
 RUN chown -R www-data:www-data /var/www/html/writable /var/www/html/public

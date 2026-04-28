@@ -21,9 +21,6 @@ class App extends BaseConfig
     public function __construct()
     {
         parent::__construct();
-        
-        // ดึงค่าจาก .env ถ้ามี ถ้าไม่มีค่อยใช้ default
-        $this->baseURL = env('app.baseURL', $this->baseURL);
     }
 
     /**

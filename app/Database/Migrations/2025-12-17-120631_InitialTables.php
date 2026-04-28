@@ -66,6 +66,7 @@ class InitialTables extends Migration
             'id' => ['type' => 'INT', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
             'respondent_id' => ['type' => 'INT', 'constraint' => 11, 'unsigned' => true],
             'prep_aspect' => ['type' => 'VARCHAR', 'constraint' => 50],
+            'deleted_at' => ['type' => 'DATETIME', 'null' => true],
         ]);
         $this->forge->addKey('id', true);
         $this->forge->addForeignKey('respondent_id', 'respondents', 'id', 'CASCADE', 'CASCADE');
@@ -77,6 +78,10 @@ class InitialTables extends Migration
         $this->forge->dropTable('respondent_preps');
         $this->forge->dropTable('respondent_diseases');
         $this->forge->dropTable('respondents');
+        $this->forge->dropTable('users');
+    }
+}
+e('respondents');
         $this->forge->dropTable('users');
     }
 }

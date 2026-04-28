@@ -58,9 +58,11 @@ docker exec -i elderly-survey-db-prod sh -c 'mariadb -u root -p"$MYSQL_ROOT_PASS
 - **Hardened Permissions:** ตั้งค่าสิทธิ์โฟลเดอร์ `writable` อย่างเข้มงวดใน Dockerfile
 
 ## 🤝 ทีมงานพัฒนา (Contributors)
-- **ดร.อภิรักษ์ ทูลธรรม** (Project Lead & Architect)
-- **IoTES Research Unit** (Development & Research)
-- **วิทยาลัยพยาบาลบรมราชชนนีนครพนม มหาวิทยาลัยนครพนม**
+- **ดร.อภิรักษ์ ทูลธรรม** (Developer)
+  **IoTES Research Unit**
+  **วิทยาลัยเทคโนโลยีอุตสาหกรรมศรีสงคราม มหาวิทยาลัยนครพนม**
+- **ผศ.ดร.เบญจยามาศ พิลายนต์** (Research Project Leader)
+  **วิทยาลัยพยาบาลบรมราชชนนีนครพนม มหาวิทยาลัยนครพนม**
 
 ---
 Copyright &copy; 2025-2026 BCNNP, Nakhon Phanom University. All rights reserved.

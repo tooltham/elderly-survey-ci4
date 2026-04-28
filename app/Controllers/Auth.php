@@ -18,6 +18,17 @@ class Auth extends BaseController
         $session = session();
         $userModel = new UserModel();
 
+        // เพิ่ม Validation
+        $rules = [
+            'username' => 'required|min_length[3]',
+            'password' => 'required|min_length[4]'
+        ];
+
+        if (!$this->validate($rules)) {
+            $session->setFlashdata('msg', 'กรุณากรอกข้อมูลให้ครบถ้วนและถูกต้อง');
+            return redirect()->to('/login')->withInput();
+        }
+
         $username = $this->request->getVar('username');
         $password = $this->request->getVar('password');
 

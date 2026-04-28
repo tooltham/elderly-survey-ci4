@@ -10,7 +10,7 @@ class RespondentModel extends Model
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
-    protected $useSoftDeletes   = false;
+    protected $useSoftDeletes   = true;
     protected $allowedFields    = [
         'paper_id',
         'prefix',
@@ -33,5 +33,21 @@ class RespondentModel extends Model
         'is_prepared',
         'created_by'
     ];
-    protected $useTimestamps    = true;
+
+    // Dates
+    protected $useTimestamps = true;
+    protected $dateFormat    = 'datetime';
+    protected $createdField  = 'created_at';
+    protected $updatedField  = 'updated_at';
+    protected $deletedField  = 'deleted_at';
+
+    // Validation
+    protected $validationRules      = [
+        'first_name' => 'required|min_length[2]',
+        'last_name'  => 'required|min_length[2]',
+        'age_year'   => 'required|numeric',
+        'gender'     => 'required'
+    ];
+    protected $validationMessages   = [];
+    protected $skipValidation       = false;
 }

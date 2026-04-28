@@ -16,22 +16,31 @@
 
         .sidebar {
             min-height: 100vh;
-            background: #2c3e50;
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
             color: white;
+            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
         }
 
         .sidebar a {
-            color: #bdc3c7;
+            color: #94a3b8;
             text-decoration: none;
-            padding: 10px 15px;
+            padding: 12px 20px;
             display: block;
+            border-radius: 8px;
+            margin: 4px 0;
+            transition: all 0.3s ease;
         }
 
-        .sidebar a:hover,
-        .sidebar a.active {
-            background: #34495e;
+        .sidebar a:hover {
+            background: rgba(255, 255, 255, 0.1);
             color: white;
-            border-left: 4px solid #3498db;
+        }
+
+        .sidebar a.active {
+            background: #3b82f6;
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.5);
         }
 
         .content {

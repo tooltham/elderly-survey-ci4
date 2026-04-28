@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  app:
+    build: 
+      context: .
+      target: runtime # ใช้ stage runtime จาก Dockerfile
+    container_name: elderly-survey-app-prod
+    restart: always
+    environment:
+      - CI_ENVIRONMENT=production
+    networks:
+      - production-network
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mariadb:11
+    container_name: elderly-survey-db-prod
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: elderly_survey
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - elderly-survey-db-prod-data:/var/lib/mysql
+    networks:
+      - production-network
+    healthcheck:
+      test: ["CMD", "mariadb-admin", "ping", "-h", "localhost", "-u", "root", "-p$MYSQL_ROOT_PASSWORD"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  production-network:
+    external: true
+
+volumes:
+  elderly-survey-db-prod-data:

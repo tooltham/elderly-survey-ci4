@@ -16,18 +16,14 @@ class App extends BaseConfig
      *
      * E.g., http://example.com/
      */
-    public string $baseURL = '';
+    public string $baseURL = 'http://localhost:8080/';
 
     public function __construct()
     {
         parent::__construct();
-
-        if (isset($_SERVER['HTTP_HOST'])) {
-            $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') ? 'https' : 'http';
-            $this->baseURL = $protocol . '://' . $_SERVER['HTTP_HOST'] . '/';
-        } else {
-            $this->baseURL = 'http://34.15.158.206/';
-        }
+        
+        // ดึงค่าจาก .env ถ้ามี ถ้าไม่มีค่อยใช้ default
+        $this->baseURL = env('app.baseURL', $this->baseURL);
     }
 
     /**

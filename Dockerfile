@@ -46,7 +46,8 @@ WORKDIR /var/www/html
 COPY --from=builder /var/www/html /var/www/html
 
 # Set permissions for CI4
-RUN chown -R www-data:www-data /var/www/html/writable /var/www/html/public
+RUN chown -R www-data:www-data /var/www/html/writable /var/www/html/public && \
+    chmod -R 777 /var/www/html/writable
 
 # Set Apache Document Root to /public
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
